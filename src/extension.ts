@@ -16,11 +16,8 @@ export function activate(context: vscode.ExtensionContext) {
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('extension.sayHello', () => {
+    let disposable = vscode.commands.registerCommand('extension.genarateContent', () => {
         // The code you place here will be executed every time your command is executed
-
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Hello World');
         genarateContent();
     });
 
@@ -33,7 +30,6 @@ function genarateContent(){
     vscode.workspace.findFiles('**/*.md').then(value=>{
         let rootPath=vscode.workspace.workspaceFolders[0].uri.path;
         value.forEach((item,idx)=>{        
-            // let txt=fs.readFileSync(item.fsPath,'utf8');
             let fullPath=item.path;
             let relativePath=path.relative(String(rootPath),fullPath);
             relativePath=relativePath.slice(0,relativePath.length-3);
@@ -43,14 +39,67 @@ function genarateContent(){
                 fullPath:fullPath,
                 relativePath:relativePath,
                 pathLevels:relativePath.split(path.sep)
-            })           
+            })
         })
-        console.log(mdFileList);
-        console.log(JSON.stringify(fillToContentTree(mdFileList),null,4))
-        return mdFileList;
+        console.log('mdFileList',mdFileList);
+        let contentTree=fillToContentTree(mdFileList);
+        console.log('contentTree',contentTree);
+        let contentList=treeToContentList(contentTree);
+        console.log('contentList',contentList);
+        let contentStr=listToContentString(contentList);
+        console.log(contentStr);
+        let targetPath=vscode.workspace.workspaceFolders[0].uri.fsPath+path.sep+'SUMMARY.md';
+        fs.writeFile(targetPath,contentStr,(e)=>{
+            if(e)vscode.window.showErrorMessage(`${e.code} : ${e.errno} , write file failed ${e.path}`);
+            else vscode.window.showInformationMessage('Created gitbook contents at SUMMARY.md');
+        });        
     });
 }
 
+/**
+ * 根据数组生成目录正文
+ * @param contentList
+ */
+function listToContentString(contentList){
+    let str="# Summary\n\n";
+    for(let i=0,m=contentList.length;i<m;i++){
+        let item=contentList[i];
+        let indentSpaceStr=' '.repeat(item.indent);
+        str+=`${indentSpaceStr}* [${item.title}](${item.path})\n`;
+    }
+    return str;
+}
+
+/**
+ * fileTree to List
+ * @param fileTree 
+ */
+function treeToContentList(fileTree){
+    let rootNode=fileTree.root;
+    let contentList=[];
+    for(let nodeName in rootNode.children){
+        let node = rootNode.children[nodeName];
+        nodeToList(contentList,node,0);
+    }
+    return contentList;
+}
+function nodeToList(contentList,node,indent){
+    contentList.push({
+        indent:indent,
+        title:node.title,
+        path:node.path+'.md'
+    })
+    indent+=2;
+    for(let nodeName in node.children){
+        let childNode=node.children[nodeName];
+        nodeToList(contentList,childNode,indent);
+    }
+}
+
+/**
+ * fileList to Tree
+ * @param mdFileList 
+ */
 function fillToContentTree(mdFileList){
     let mainTree={
         'root':{
@@ -67,6 +116,11 @@ function fillToContentTree(mdFileList){
     return mainTree;
 }
 
+/**
+ * 递归
+ * @param parent
+ * @param pathLevels 
+ */
 function fill(parent,pathLevels){
     let level=pathLevels[0];
     let leftLevelCount=pathLevels.length-1;
