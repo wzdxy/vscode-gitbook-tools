@@ -11,13 +11,13 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.genarateContent"
+        "onCommand:extension.genarateSummary"
     ],
     "main": "./out/src/extension",
     "contributes": {
         "commands": [{
-            "command": "extension.genarateContent",
-            "title": "Genarate gitbook content"
+            "command": "extension.genarateSummary",
+            "title": "Genarate Gitbook Summary"
         }]
     },
     "scripts": {

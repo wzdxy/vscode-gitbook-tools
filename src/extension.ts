@@ -16,19 +16,21 @@ export function activate(context: vscode.ExtensionContext) {
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('extension.genarateContent', () => {
-        // The code you place here will be executed every time your command is executed
-        genarateContent();
+    let disposable = vscode.commands.registerCommand('extension.genarateSummary', () => {
+        genarateSummary();
     });
 
     context.subscriptions.push(disposable);
 }
 
-
-function genarateContent(){
-    let mdFileList=[];
+/**
+ * Genarate Gitbook Summary
+ * 生成目录
+ */
+function genarateSummary(){
     vscode.workspace.findFiles('**/*.md').then(value=>{
         let rootPath=vscode.workspace.workspaceFolders[0].uri.path;
+        let mdFileList=[];
         value.forEach((item,idx)=>{        
             let fullPath=item.path;
             let relativePath=path.relative(String(rootPath),fullPath);
