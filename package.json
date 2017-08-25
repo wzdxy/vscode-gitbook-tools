@@ -11,14 +11,35 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.genarateSummary"
+        "onCommand:extension.genarateSummary",
+        "onCommand:extension.addChapter",
+        "onCommand:extension.renameFileOrFolder",
+        "onCommand:extension.deleteChapter"
     ],
     "main": "./out/src/extension",
     "contributes": {
         "commands": [{
             "command": "extension.genarateSummary",
             "title": "Genarate Gitbook Summary"
-        }]
+        },{
+            "command": "extension.addChapter",
+            "title": "GitBook - Add Chapter"
+        },{
+            "command": "extension.renameFileOrFolder",
+            "title": "GitBook - Rename File/Folder"
+        },{
+            "command": "extension.deleteChapter",
+            "title": "GitBook - Delete Chapter"
+        }],
+        "menus": {
+            "explorer/context":[{
+                "command": "extension.addChapter"
+            },{
+                "command": "extension.renameFileOrFolder"
+            },{
+                "command": "extension.deleteChapter"
+            }]
+        }
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",

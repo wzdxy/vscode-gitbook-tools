@@ -21,6 +21,41 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(disposable);
+
+    /**
+     * Add chapter
+     * 增加章节 (增加文件, 文件夹, 并更新目录)
+     */
+    let addChapterDisposable = vscode.commands.registerCommand('extension.addChapter', (arg) => {
+        console.log('addChapter',arg);
+        vscode.window.showInputBox({placeHolder:'Chapter Name'}).then((fileName)=>{
+            if(fileName!==undefined)console.log(fileName)
+        })
+    });
+    context.subscriptions.push(addChapterDisposable);
+
+    /**
+     * Rename file and folder (and update summary)
+     * 重命名章节文件 (同时重命名文件, 文件夹, 并更新目录)
+     */
+    let renameFileOrFolderDisposable = vscode.commands.registerCommand('extension.renameFileOrFolder', (target) => {
+        console.log('renameFileOrFolder',getRaletivePathFromRoot(target.path));
+        vscode.window.showInputBox({placeHolder:'New File/Folder Name'}).then((newName)=>{
+            if(newName!==undefined)console.log(newName)
+        })
+    });
+    context.subscriptions.push(renameFileOrFolderDisposable);
+
+    /**
+     * Delete chapter (file folder summary)
+     * 删除一章 (删除文件, 文件夹, 并更新目录)
+     */
+    let renameDeleteChapterDisposable = vscode.commands.registerCommand('extension.deleteChapter', (target) => {
+        console.log('deleteChapter',getRaletivePathFromRoot(target.path));
+        vscode.window.showQuickPick(['Delete ( ) Files and ( ) Folders. Then Update SUMMARY.md ','Cancel']).then((arg)=>{console.log(arg)});
+    });
+    context.subscriptions.push(renameFileOrFolderDisposable);
+
 }
 
 /**
@@ -144,6 +179,16 @@ function fill(parent,pathLevels){
         }
     }
 }
+
+/**
+ * 
+ * @param targetPath 获取相对根目录的相对路径
+ */
+function getRaletivePathFromRoot(targetPath){
+    let rootPath=vscode.workspace.workspaceFolders[0].uri.path;
+    return path.relative(rootPath,targetPath);
+}
+
 // this method is called when your extension is deactivated
 export function deactivate() {
 }
