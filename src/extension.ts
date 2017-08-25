@@ -28,7 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
  * 生成目录
  */
 function genarateSummary(){
-    vscode.workspace.findFiles('**/*.md').then(value=>{
+    vscode.workspace.findFiles('**/*.md','SUMMARY.md').then(value=>{
         let rootPath=vscode.workspace.workspaceFolders[0].uri.path;
         let mdFileList=[];
         value.forEach((item,idx)=>{        
