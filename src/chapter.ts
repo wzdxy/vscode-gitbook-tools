@@ -4,8 +4,10 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as utils from './utils';
+import * as summary from './summary';
 
 export function add(target){
+    console.log(summary.getCurrentSummary())
     console.log('addChapter',target);
     vscode.window.showInputBox({placeHolder:'Chapter Name'}).then((fileName)=>{
         if(fileName!==undefined)console.log(fileName)

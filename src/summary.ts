@@ -4,6 +4,24 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
+export function getCurrentSummary(){
+    let targetPath=vscode.workspace.workspaceFolders[0].uri.fsPath+path.sep+'SUMMARY.md'
+    let itemReg=/^\s*\* \[(\S+)\]\((\S+)(.md)\)$/gm;
+    let splitReg=/\s*\* \[(\S+)\]\((\S+.md)\)/;
+    let str=fs.readFileSync(targetPath,'utf8');
+    let contentItem=str.match(itemReg);
+    let contentArray=[];
+    contentItem.forEach((item)=>{
+        let c=splitReg.exec(item);
+        contentArray.push({
+            fileName:c[1],
+            relativePath:c[2],
+            pathLevels:c[2].split('/')
+        })
+    })
+    return contentArray;
+}
+
 /**
  * Genarate Gitbook Summary
  * 生成目录
