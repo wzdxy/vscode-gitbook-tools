@@ -6,6 +6,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as summary from './summary';
 import * as utils from './utils';
+import * as chapter from './chapter';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -28,11 +29,8 @@ export function activate(context: vscode.ExtensionContext) {
      * Add chapter
      * 增加章节 (增加文件, 文件夹, 并更新目录)
      */
-    let addChapterDisposable = vscode.commands.registerCommand('extension.addChapter', (arg) => {
-        console.log('addChapter',arg);
-        vscode.window.showInputBox({placeHolder:'Chapter Name'}).then((fileName)=>{
-            if(fileName!==undefined)console.log(fileName)
-        })
+    let addChapterDisposable = vscode.commands.registerCommand('extension.addChapter', (target) => {
+        chapter.add(target);        
     });
     context.subscriptions.push(addChapterDisposable);
 
@@ -41,10 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
      * 重命名章节文件 (同时重命名文件, 文件夹, 并更新目录)
      */
     let renameFileOrFolderDisposable = vscode.commands.registerCommand('extension.renameFileOrFolder', (target) => {
-        console.log('renameFileOrFolder',utils.getRaletivePathFromRoot(target.path));
-        vscode.window.showInputBox({placeHolder:'New File/Folder Name'}).then((newName)=>{
-            if(newName!==undefined)console.log(newName)
-        })
+        chapter.rename(target);
     });
     context.subscriptions.push(renameFileOrFolderDisposable);
 
@@ -53,8 +48,7 @@ export function activate(context: vscode.ExtensionContext) {
      * 删除一章 (删除文件, 文件夹, 并更新目录)
      */
     let renameDeleteChapterDisposable = vscode.commands.registerCommand('extension.deleteChapter', (target) => {
-        console.log('deleteChapter',utils.getRaletivePathFromRoot(target.path));
-        vscode.window.showQuickPick(['Delete ( ) Files and ( ) Folders. Then Update SUMMARY.md ','Cancel']).then((arg)=>{console.log(arg)});
+        chapter.remove(target);    
     });
     context.subscriptions.push(renameFileOrFolderDisposable);
 
