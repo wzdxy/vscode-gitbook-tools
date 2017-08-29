@@ -7,7 +7,9 @@ import * as utils from './utils';
 import * as summary from './summary';
 
 export function add(target){
-    console.log(summary.getCurrentSummary())
+    let list=summary.getCurrentSummary();
+    console.log(list);
+    console.log(summary.fillToContentTree(list));
     console.log('addChapter',target);
     vscode.window.showInputBox({placeHolder:'Chapter Name'}).then((fileName)=>{
         if(fileName!==undefined)console.log(fileName)

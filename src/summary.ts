@@ -4,6 +4,10 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
+/**
+ * Get Current Summary List
+ * @return {Array} ContentArray
+ */
 export function getCurrentSummary(){
     let targetPath=vscode.workspace.workspaceFolders[0].uri.fsPath+path.sep+'SUMMARY.md'
     let itemReg=/^\s*\* \[(\S+)\]\((\S+)(.md)\)$/gm;
@@ -14,9 +18,11 @@ export function getCurrentSummary(){
     contentItem.forEach((item)=>{
         let c=splitReg.exec(item);
         contentArray.push({
-            fileName:c[1],
+            fileName:c[1]+'.md',
+            fileNameWithoutExt:c[1],
+            fullPath:path.resolve(__dirname,c[2]),
             relativePath:c[2],
-            pathLevels:c[2].split('/')
+            pathLevels:c[2].split('/'),
         })
     })
     return contentArray;
@@ -101,7 +107,7 @@ function nodeToList(contentList,node,indent){
  * fileList to Tree
  * @param mdFileList 
  */
-function fillToContentTree(mdFileList){
+export function fillToContentTree(mdFileList){
     let mainTree={
         'root':{
             title:'ROOT',path:'',children:{}
